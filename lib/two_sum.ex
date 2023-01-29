@@ -9,8 +9,8 @@ defmodule TwoSum do
   You can return the answer in any order.
   ## Examples
 
-      iex> Leetcode.two_sum([1, 2, 3], 3)
-      [1,2]
+      iex> TwoSum.two_sum([1, 2, 3], 3)
+      [0,1]
 
   """
 
