@@ -14,8 +14,8 @@ defmodule AddTwoNumbers do
   end
 
   defp reduce_two_lists(
-         l1 = %__MODULE__.ListNode{next: next1, index: _, val: val1},
-         l2 = %__MODULE__.ListNode{next: next2, index: _, val: val2}
+         %__MODULE__.ListNode{next: next1, index: _, val: val1},
+         %__MODULE__.ListNode{next: next2, index: _, val: val2}
        ) do
     [val1 + val2 | reduce_two_lists(next1, next2)]
   end
@@ -30,17 +30,19 @@ defmodule AddTwoNumbers do
          %__MODULE__.ListNode{next: _, index: _, val: val1},
          nil
        ),
-       do: [val1 | []]
+       do: val1
 
   @spec size(list :: ListNode.t() | nil) :: integer
   def size(%__MODULE__.ListNode{next: _, index: index}), do: index + 1
   def new(int) when int > 9, do: nil
   def new(int), do: %__MODULE__.ListNode{val: int}
 
+  defp new, do: %__MODULE__.ListNode{}
+
   @spec element_at(list :: ListNode.t() | nil, idx :: integer) :: integer | nil
   def element_at(curr = %__MODULE__.ListNode{next: _, index: _}, idx) do
     if curr.index == idx do
-      curr.val
+      curr
     else
       element_at(curr.next, idx)
     end
@@ -57,16 +59,16 @@ defmodule AddTwoNumbers do
   end
 
   @spec reverse(list :: ListNode.t() | nil) :: ListNode.t() | nil
-  def reverse(nil), do: []
+  def reverse(nil), do: nil
 
-  def reverse(%__MODULE__.ListNode{val: val, next: next}) do
-    [val | reverse(next)]
+  def reverse(%__MODULE__.ListNode{val: val, next: next, index: index}) do
+    new = new()
+    %__MODULE__.ListNode{new | val: val, index: index, next: reverse(next)}
   end
 
   @spec traverse(list :: ListNode.t() | nil) :: ListNode.t() | nil
-  def traverse(%__MODULE__.ListNode{next: next, val: val}) do
-    traverse(next) ++ [val]
-  end
+  def traverse(nil), do: nil
 
-  def traverse(nil), do: []
+  def traverse(list = %__MODULE__.ListNode{next: next, index: index}) do
+  end
 end
