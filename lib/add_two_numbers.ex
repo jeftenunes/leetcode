@@ -9,72 +9,47 @@ defmodule AddTwoNumbers do
 
   @spec add_two_numbers(l1 :: ListNode.t() | nil, l2 :: ListNode.t() | nil) :: ListNode.t() | nil
   def add_two_numbers(l1, l2) do
-    {val1, _} = get_val(l1) |> Enum.join("") |> Integer.parse()
-    {val2, _} = get_val(l2) |> Enum.join("") |> Integer.parse()
-
-    sum = val1 + val2
-    res = sum |> to_string() |> String.graphemes() |> Enum.reverse()
-    new = map(new(), res, length(res) - 1)
-    new
+    sum(l1, l2)
   end
 
-  def map(_, [], _), do: nil
-
-  def map(curr = %__MODULE__.ListNode{next: _, val: _}, [hd | tl]) do
-    {val, _} = Integer.parse(hd)
-    %__MODULE__.ListNode{curr | next: map(curr, tl), val: val}
+  def sum(curr_l1 = %ListNode{next: next_l1}, curr_l2 = %ListNode{next: next_l2}) do
+    %ListNode{val: curr_l1.val + curr_l2.val, next: sum(next_l1, next_l2)}
   end
 
-  def get_val(nil), do: []
+  @spec count(list :: ListNode.t() | nil) :: integer
+  def count(nil), do: 0
 
-  def get_val(list) do
-    [list.val | get_val(list.next)]
+  def count(%ListNode{next: next}) do
+    count = count(next) + 1
+    count
   end
 
-  defp reduce_two_lists(
-         %__MODULE__.ListNode{next: _, val: val1},
-         nil
-       ),
-       do: val1
-
-  @spec size(list :: ListNode.t() | nil) :: integer
-  def size(%__MODULE__.ListNode{next: _}), do: index + 1
   def new(int) when int > 9, do: nil
-  def new(int), do: %__MODULE__.ListNode{val: int}
+  def new(int), do: %ListNode{val: int, next: nil}
 
-  defp new, do: %__MODULE__.ListNode{}
-
-  @spec element_at(list :: ListNode.t() | nil, idx :: integer) :: integer | nil
-  def element_at(curr = %__MODULE__.ListNode{next: _, index: _}, idx) do
-    if curr.index == idx do
-      curr
-    else
-      element_at(curr.next, idx)
-    end
-  end
+  defp new, do: %ListNode{}
 
   @spec add(list :: ListNode.t() | nil, val :: integer()) :: ListNode.t() | nil
-  def add(curr = %__MODULE__.ListNode{next: _, index: index}, val)
-      when index + 1 >= 100 or (val < 0 or val > 9),
-      do: curr
-
-  def add(curr = %__MODULE__.ListNode{next: _, index: index}, val) do
+  def add(curr = %ListNode{next: _}, val) do
     new = new(val)
-    %__MODULE__.ListNode{new | next: curr, index: index + 1}
-  end
-
-  @spec reverse(list :: ListNode.t() | nil) :: ListNode.t() | nil
-  def reverse(nil), do: nil
-
-  def reverse(%__MODULE__.ListNode{val: val, next: next, index: index}) do
-    new = new()
-    %__MODULE__.ListNode{new | val: val, index: index, next: reverse(next)}
+    %ListNode{new | next: curr}
   end
 
   @spec traverse(list :: ListNode.t() | nil) :: ListNode.t() | nil
-  def traverse(nil), do: []
+  def traverse(nil), do: nil
 
-  def traverse(curr = %__MODULE__.ListNode{val: _, next: next, index: _}) do
-    traverse(next) ++ [curr]
+  def traverse(%__MODULE__.ListNode{val: val, next: next}) do
+    new = new()
+    %ListNode{new | val: val, next: traverse(next)}
+  end
+
+  def element_at(list = %ListNode{val: _, next: next}, idx) do
+    count = count(list)
+
+    if count == idx + 1 do
+      list
+    else
+      element_at(next, idx)
+    end
   end
 end
