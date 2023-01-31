@@ -2,38 +2,43 @@ defmodule AddTwoNumbers do
   defmodule ListNode do
     @type t :: %__MODULE__{
             val: integer,
-            index: integer,
             next: ListNode.t() | nil
           }
-    defstruct val: 0, index: 0, next: nil
+    defstruct val: 0, next: nil
   end
 
   @spec add_two_numbers(l1 :: ListNode.t() | nil, l2 :: ListNode.t() | nil) :: ListNode.t() | nil
   def add_two_numbers(l1, l2) do
-    reduce_two_lists(l1, l2)
+    {val1, _} = get_val(l1) |> Enum.join("") |> Integer.parse()
+    {val2, _} = get_val(l2) |> Enum.join("") |> Integer.parse()
+
+    sum = val1 + val2
+    res = sum |> to_string() |> String.graphemes() |> Enum.reverse()
+    new = map(new(), res, length(res) - 1)
+    new
+  end
+
+  def map(_, [], _), do: nil
+
+  def map(curr = %__MODULE__.ListNode{next: _, val: _}, [hd | tl]) do
+    {val, _} = Integer.parse(hd)
+    %__MODULE__.ListNode{curr | next: map(curr, tl), val: val}
+  end
+
+  def get_val(nil), do: []
+
+  def get_val(list) do
+    [list.val | get_val(list.next)]
   end
 
   defp reduce_two_lists(
-         %__MODULE__.ListNode{next: next1, index: _, val: val1},
-         %__MODULE__.ListNode{next: next2, index: _, val: val2}
-       ) do
-    [val1 + val2 | reduce_two_lists(next1, next2)]
-  end
-
-  defp reduce_two_lists(
-         nil,
-         nil
-       ),
-       do: []
-
-  defp reduce_two_lists(
-         %__MODULE__.ListNode{next: _, index: _, val: val1},
+         %__MODULE__.ListNode{next: _, val: val1},
          nil
        ),
        do: val1
 
   @spec size(list :: ListNode.t() | nil) :: integer
-  def size(%__MODULE__.ListNode{next: _, index: index}), do: index + 1
+  def size(%__MODULE__.ListNode{next: _}), do: index + 1
   def new(int) when int > 9, do: nil
   def new(int), do: %__MODULE__.ListNode{val: int}
 
@@ -67,8 +72,9 @@ defmodule AddTwoNumbers do
   end
 
   @spec traverse(list :: ListNode.t() | nil) :: ListNode.t() | nil
-  def traverse(nil), do: nil
+  def traverse(nil), do: []
 
-  def traverse(list = %__MODULE__.ListNode{next: next, index: index}) do
+  def traverse(curr = %__MODULE__.ListNode{val: _, next: next, index: _}) do
+    traverse(next) ++ [curr]
   end
 end
