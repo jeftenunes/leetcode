@@ -12,25 +12,33 @@ defmodule AddTwoNumbers do
     sum(l1, l2, 0)
   end
 
+  def sum(nil, nil, carry) when carry > 0,
+    do: %ListNode{
+      val: carry,
+      next: nil
+    }
+
   def sum(nil, nil, _), do: nil
 
   def sum(curr_l1 = %ListNode{next: next_l1}, nil, carry) do
-    %ListNode{val: curr_l1.val + 0 + carry, next: sum(next_l1, nil, 0)}
+    %ListNode{
+      val: rem(curr_l1.val + 0 + carry, 10),
+      next: sum(next_l1, nil, trunc((curr_l1.val + 0 + carry) / 10))
+    }
   end
 
   def sum(nil, curr_l2 = %ListNode{next: next_l2}, carry) do
-    %ListNode{val: 0 + curr_l2.val + carry, next: sum(nil, next_l2, 0)}
+    %ListNode{
+      val: rem(0 + curr_l2.val + carry, 10),
+      next: sum(nil, next_l2, trunc((0 + curr_l2.val + carry) / 10))
+    }
   end
 
-  def sum(curr_l1 = %ListNode{next: next_l1}, curr_l2 = %ListNode{next: next_l2}, carry)
-      when curr_l1.val + curr_l2.val + carry <= 9 do
-    %ListNode{val: curr_l1.val + curr_l2.val + carry, next: sum(next_l1, next_l2, 0)}
-  end
-
-  def sum(curr_l1 = %ListNode{next: next_l1}, curr_l2 = %ListNode{next: next_l2}, carry)
-      when curr_l1.val + curr_l2.val + carry > 9 do
-    carry = trunc((curr_l1.val + curr_l2.val + carry) / 10)
-    %ListNode{val: rem(curr_l1.val + curr_l2.val, 10), next: sum(next_l1, next_l2, carry)}
+  def sum(curr_l1 = %ListNode{next: next_l1}, curr_l2 = %ListNode{next: next_l2}, carry) do
+    %ListNode{
+      val: rem(curr_l1.val + curr_l2.val + carry, 10),
+      next: sum(next_l1, next_l2, trunc((curr_l1.val + curr_l2.val + carry) / 10))
+    }
   end
 
   @spec count(list :: ListNode.t() | nil) :: integer
